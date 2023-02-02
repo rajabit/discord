@@ -35,9 +35,6 @@ class DiscordServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->alias(Discord::class, 'Discord');
-
-
         $this->defineRoutes();
         $this->configureMiddleware();
     }
@@ -67,5 +64,10 @@ class DiscordServiceProvider extends ServiceProvider
         $kernel = app()->make(Kernel::class);
 
         $kernel->prependToMiddlewarePriority(AcceptLanguageMiddleware::class);
+    }
+
+    public function provides()
+    {
+        return ['Discord'];
     }
 }

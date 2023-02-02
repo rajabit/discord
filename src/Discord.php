@@ -1,6 +1,8 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace Rajabit\Discord;
+
+use Illuminate\Support\Facades\Facade;
 
 
 class Discord extends Facade
