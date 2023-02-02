@@ -1,0 +1,48 @@
+{
+    "name": "rajabit/discord",
+    "description": "Laravel discord api",
+    "keywords": [
+        "laravel",
+        "discord"
+    ],
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/rajabit",
+        "source": "https://github.com/rajabit/discord"
+    },
+    "authors": [
+        {
+            "name": "Mehdi Rajabi",
+            "email": "96rajabi@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0.2",
+        "guzzlehttp/guzzle": "^7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Rajabit\\Discord\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Rajabit\\Discord\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.x-dev"
+        },
+        "laravel": {
+            "providers": [
+                "Rajabit\\Discord\\DiscordServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
