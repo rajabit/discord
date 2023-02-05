@@ -2,6 +2,7 @@
 
 namespace Rajabit\Discord;
 
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
 class DiscordHandler
@@ -19,22 +20,24 @@ class DiscordHandler
 
     public function url(string $slug = ""): string
     {
-        return "$this->baseUrl/$this->appId/commands/$slug";
+        return "$this->baseUrl/$this->appId/$slug";
     }
 
     private function http(array $headers = [])
     {
-        return Http::withToken($this->token)->acceptJson();
-    }
-
-    public function makeGlobalCommand(array $array)
-    {
         return Http::withHeaders([
-            'Authorization' => 'foo',
-        ])->post($this->url("commands"), $array);
+            "Authorization" => "Bot $this->token",
+            "Content-Type" => "application/json"
+        ])->acceptJson();
     }
 
-    public function makeGuildCommand()
+    public function makeGlobalCommand(array $array): Response
     {
+        return $this->http()->post($this->url("commands"), $array);
+    }
+
+    public function makeGuildCommand(string $guild_id, array $array): Response
+    {
+        return $this->http()->post($this->url("commands"), $array);
     }
 }

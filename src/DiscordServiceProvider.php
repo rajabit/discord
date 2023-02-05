@@ -5,7 +5,7 @@ namespace Rajabit\Discord;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
-use Rajabit\Http\Controllers\WebhookController;
+use Rajabit\Discord\Http\Controllers\WebhookController;
 use Rajabit\Discord\Http\Middleware\WebhookAuthenticateMiddleware;
 
 class DiscordServiceProvider extends ServiceProvider
@@ -46,7 +46,7 @@ class DiscordServiceProvider extends ServiceProvider
         }
 
         Route::group(['prefix' => config('discord.prefix', 'discord')], function () {
-            Route::get(
+            Route::any(
                 '/webhook',
                 WebhookController::class . '@index'
             )->middleware(WebhookAuthenticateMiddleware::class)
