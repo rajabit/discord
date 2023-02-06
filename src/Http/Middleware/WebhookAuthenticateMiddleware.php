@@ -3,9 +3,8 @@
 namespace Rajabit\Discord\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use Discord\Interaction;
-use Discord\InteractionResponseType;
+use Illuminate\Http\Request;
 
 class WebhookAuthenticateMiddleware
 {
@@ -17,18 +16,11 @@ class WebhookAuthenticateMiddleware
          * Validate discord interaction request
          * 
          */
-
-        $CLIENT_PUBLIC_KEY = config('discord.public');
-
-        $signature = $request->header('HTTP_X_SIGNATURE_ED25519');
-        $timestamp = $request->header('HTTP_X_SIGNATURE_TIMESTAMP');
-        $postData = file_get_contents('php://input');
-
         if (!Interaction::verifyKey(
-            $postData,
-            $signature,
-            $timestamp,
-            $CLIENT_PUBLIC_KEY
+            $request->getContent(),
+            $request->header('x-signature-ed25519'),
+            $request->header('x-signature-timestamp'),
+            config('discord.public')
         )) {
             return abort(401);
         }
