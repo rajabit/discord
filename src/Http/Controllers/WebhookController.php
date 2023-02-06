@@ -3,9 +3,8 @@
 namespace Rajabit\Discord\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Discord\InteractionResponseType;
 use Illuminate\Support\Facades\Storage;
-use Rajabit\Discord\InteractionResponseType;
-use Rajabit\Discord\InteractionType;
 
 class WebhookController
 {
@@ -23,8 +22,9 @@ class WebhookController
         Storage::disk('local')
             ->put('discord.log', json_encode($array, JSON_PRETTY_PRINT) . "\n\n");
 
+
         return response()->json([
-            "type" => InteractionResponseType::CHANNEL_MESSAGE_WITH_SOURCE,
+            "type" => InteractionResponseType::PONG,
             "data" => [
                 "content" => 'Hello world',
             ]

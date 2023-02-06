@@ -4,6 +4,8 @@ namespace Rajabit\Discord\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Discord\Interaction;
+use Discord\InteractionResponseType;
 
 class WebhookAuthenticateMiddleware
 {
@@ -16,25 +18,17 @@ class WebhookAuthenticateMiddleware
          * 
          */
 
-        $signature = $request->header('X-Signature-Ed25519');
-        $timestamp = $request->header('X-Signature-Timestamp');
+        $CLIENT_PUBLIC_KEY = config('discord.public');
 
-        if (empty($signature) || empty($timestamp))
-            return abort(401);
+        $signature = $request->header('HTTP_X_SIGNATURE_ED25519');
+        $timestamp = $request->header('HTTP_X_SIGNATURE_TIMESTAMP');
+        $postData = file_get_contents('php://input');
 
-
-        if (!trim($signature, '0..9A..Fa..f') == '') {
-            return abort(401);
-        }
-
-        $message = $timestamp . $request->getContent();
-        $binary_signature = sodium_hex2bin($signature);
-        $binary_key = sodium_hex2bin(config('discord.public'));
-
-        if (!sodium_crypto_sign_verify_detached(
-            $binary_signature,
-            $message,
-            $binary_key
+        if (!Interaction::verifyKey(
+            $postData,
+            $signature,
+            $timestamp,
+            $CLIENT_PUBLIC_KEY
         )) {
             return abort(401);
         }
