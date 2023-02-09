@@ -5,10 +5,12 @@ namespace Rajabit\Discord;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
+use Rajabit\Discord\Console\Commands\MigrateCommand;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Rajabit\Discord\Http\Controllers\WebhookController;
 use Rajabit\Discord\Http\Middleware\WebhookAuthenticateMiddleware;
 
-class DiscordServiceProvider extends ServiceProvider
+class DiscordServiceProvider extends ServiceProvider implements DeferrableProvider
 {
 
     public function boot()
@@ -36,6 +38,7 @@ class DiscordServiceProvider extends ServiceProvider
         });
 
         $this->defineRoutes();
+        $this->registerCommands();
         $this->configureMiddleware();
     }
 
@@ -54,11 +57,15 @@ class DiscordServiceProvider extends ServiceProvider
         });
     }
 
-    /**
-     * Configure the Sanctum middleware and priority.
-     *
-     * @return void
-     */
+    protected function registerCommands()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                MigrateCommand::class
+            ]);
+        }
+    }
+
     protected function configureMiddleware()
     {
         $kernel = app()->make(Kernel::class);
@@ -68,6 +75,6 @@ class DiscordServiceProvider extends ServiceProvider
 
     public function provides()
     {
-        return ['Discord'];
+        return ['Discord', MigrateCommand::class];
     }
 }
