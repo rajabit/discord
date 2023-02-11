@@ -1,5 +1,6 @@
 <?php
 
+
 return [
     /** Discord app */
     'app_id' => env('DISCORD_APP_ID'),
@@ -34,26 +35,31 @@ return [
      ** You can use anyone you want or use multiple together.
      * 
      * @param event
-     * It passes interaction type and data to your event like event(string $type, array $data)
+     * It passes interaction request to your event like event(array $request)
+
+     * @param job
+     * It queues selected job with interaction request like job(array $request)
+     *  
+     * @param command 
+     * It executes selected command with interaction type and command name like artisan:command --type=1 --command=ping
      * 
      * @param controller 
      * It passes discord request model to your own route 
      * 
-     * @param job
-     * It queues selected job with interaction type and data to your event like job(string $type, array $data)
-     *  
-     * @param command 
-     * It executes selected command with interaction type and command name like artisan:command --type=1 --command=ping
-     */
-    'commands' => [
+     * example:
+     * 
+     'commands' => [
         'ping' => [
             'type' => 1,
             'guild_id' => null,
             'description' => 'Shows you the bot\'s heartbeats!',
-            'event' => null,
-            'controller' => null,
-            'job' => null,
-            'command' => null
+            'event' => App\Events\PingEvent::class,
+            'controller' => [App\Http\Controllers\DiscordController::class, 'ping'],
+            'job' => App\Jobs\PingJob::class,
+            'command' => ['discord:ping', '--type=type', '--name=data.name'], // if you need to pass request data
+            'command' => 'discord:ping, // else
         ]
     ]
+    **/
+    
 ];
