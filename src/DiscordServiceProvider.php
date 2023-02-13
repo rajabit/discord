@@ -7,6 +7,7 @@ use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
 use Rajabit\Discord\Console\Commands\MigrateCommand;
 use Illuminate\Contracts\Support\DeferrableProvider;
+use Rajabit\Discord\Http\Controllers\AuthenticateController;
 use Rajabit\Discord\Http\Controllers\WebhookController;
 use Rajabit\Discord\Http\Middleware\WebhookAuthenticateMiddleware;
 
@@ -49,11 +50,12 @@ class DiscordServiceProvider extends ServiceProvider implements DeferrableProvid
         }
 
         Route::group(['prefix' => config('discord.prefix', 'discord')], function () {
-            Route::any(
-                '/webhook',
-                WebhookController::class . '@index'
-            )->middleware(WebhookAuthenticateMiddleware::class)
+            Route::any('webhook', [WebhookController::class, 'index'])
+                ->middleware(WebhookAuthenticateMiddleware::class)
                 ->name('discord.webhook');
+
+            Route::any('authenticate', [AuthenticateController::class, 'oauth'])
+                ->name('discord.oauth');
         });
     }
 

@@ -80,7 +80,7 @@ class DiscordHandler
         string|int $interaction_id,
         string $interaction_token,
         array $data
-    ) {
+    ): Response {
         return $this->http()
             ->post($this->url("interactions/$interaction_id/$interaction_token/callback"), $data);
     }
@@ -88,12 +88,18 @@ class DiscordHandler
     /**
      * Returns the initial Interaction response. 
      * Functions the same as Get Webhook Message.
+     * 
+     * @param string|int $interaction_id
+     * @param string $interaction_token
+     * @param string $message_id
+     * 
+     * @return Illuminate\Http\Client\Response
      */
     public function getOriginalInteractionResponse(
         string|int $interaction_id,
         string $interaction_token,
         string $message_id
-    ) {
+    ): Response {
         return $this->http()
             ->get($this->url("webhooks/$interaction_id/$interaction_token/messages/$message_id"));
     }
@@ -101,14 +107,47 @@ class DiscordHandler
     /**
      * Edits the initial Interaction response. 
      * Functions the same as Edit Webhook Message.
+     * 
+     * @param string|int $interaction_id
+     * @param string $interaction_token
+     * @param string $message_id
+     * @param array $data
+     * 
+     * @return Illuminate\Http\Client\Response
      */
     public function editOriginalInteractionResponse(
         string|int $interaction_id,
         string $interaction_token,
         string $message_id,
         array $data
-    ) {
+    ): Response {
         return $this->http()
             ->patch($this->url("webhooks/$interaction_id/$interaction_token/messages/$message_id"), $data);
+    }
+
+    /**
+     * Exchange oauth code with access token
+     * 
+     * @param string $code
+     * 
+     * @return Illuminate\Http\Client\Response
+     */
+    public function exchangeAccessToken(string $code, string $grant_type = "authorization_code"): Response
+    {
+        return Http::asForm()->post($this->url("oauth2/token"), [
+            'client_id' => config('discord.app_id'),
+            'client_secret' => config('discord.secret'),
+            'grant_type' => $grant_type,
+            'code' => $code,
+            'redirect_uri' => config('discord.oauth_redirect')
+        ]);
+    }
+
+    public function getMe(string $token, string $token_type = "Bearer")
+    {
+        return Http::withHeaders([
+            "Authorization" => "$token_type $token",
+            "Content-Type" => "application/json"
+        ])->acceptJson()->get($this->url("oauth2/@me"));
     }
 }

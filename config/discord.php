@@ -7,11 +7,14 @@ return [
     'token' =>  env('DISCORD_TOKEN'),
     'public' =>  env('DISCORD_PUBLIC'),
     'client' =>  env('DISCORD_CLIENT'),
+    'secret' => env('DISCORD_SECRET'),
 
 
     /** Webhook route settings */
     'routes' => true,
     'prefix' => 'discord',
+    'oauth_url' => null,
+    'oauth_redirect' => null,
 
     /** 
      ** Define command list
